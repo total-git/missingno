@@ -1,4 +1,4 @@
-name:              yesodTest
+name:              yesodMissingNo
 version:           0.0.0
 cabal-version:     >= 1.8
 build-type:        Simple
@@ -22,6 +22,7 @@ library
                      Settings.StaticFiles
                      Handler.Common
                      Handler.Home
+                     Handler.HelloWorld
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -82,13 +83,13 @@ library
                  , vector
                  , time
 
-executable         yesodTest
+executable         yesodMissingNo
     if flag(library-only)
         Buildable: False
 
     main-is:           main.hs
     hs-source-dirs:    app
-    build-depends:     base, yesodTest
+    build-depends:     base, yesodMissingNo
 
     ghc-options:       -threaded -O2 -rtsopts -with-rtsopts=-N
 
@@ -115,7 +116,7 @@ test-suite test
                 TupleSections
 
     build-depends: base
-                 , yesodTest
+                 , yesodMissingNo
                  , yesod-test >= 1.4.3 && < 1.5
                  , yesod-core
                  , yesod

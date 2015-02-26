@@ -1,5 +1,5 @@
 {-# LANGUAGE PackageImports #-}
-import "yesodTest" Application (develMain)
+import "yesodMissingNo" Application (develMain)
 import Prelude (IO)
 
 main :: IO ()
