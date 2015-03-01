@@ -1,0 +1,11 @@
+Tables:
+
+* areas: _area_id_ name go_north go_east go_south go_west
+              _______   _______
+* locations: _item_id_ _area_id_ (quantity)
+
+* items: _item_id_ description name use_action
+                             _______
+* player_status: _player_id_ area_id (time)
+                _________   _______
+* item_status: _player_id_ _item_id_ status
