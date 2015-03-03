@@ -8,5 +8,36 @@ Email
     user UserId Maybe
     verkey Text Maybe
     UniqueEmail email
+Areas
+    area_id Text
+    area_description Text
+    name Text Maybe
+    go_north Text Maybe
+    go_east Text Maybe
+    go_south Text Maybe
+    go_west Text Maybe
+    UniqueAreas area_id
+    deriving Show
+Items
+    item_id Text
+    area_id Text
+    item_description Text
+    name Text
+    use_action Text
+    exact_location Text Maybe
+    takeable Bool
+    UniqueItems item_id
+    deriving Show
+Player_status
+    player_id Text
+    area_id Text
+    time UTCTime Maybe
+    UniquePlayer_status player_id
+    deriving Show
+Item_status
+    player_id Text
+    item_id Text
+    status Text
+    deriving Show
 
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)
