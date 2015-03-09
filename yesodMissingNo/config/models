@@ -1,42 +1,26 @@
-User
-    ident Text
-    password Text Maybe
-    UniqueUser ident
-    deriving Typeable
-Email
-    email Text
-    user UserId Maybe
-    verkey Text Maybe
-    UniqueEmail email
-Areas
-    area_id Text
+Area
     area_description Text
     name Text Maybe
     go_north Text Maybe
     go_east Text Maybe
     go_south Text Maybe
     go_west Text Maybe
-    UniqueAreas area_id
     deriving Show
-Items
-    item_id Text
-    area_id Text
+Item
     item_description Text
     name Text
     use_action Text
     exact_location Text Maybe
     takeable Bool
-    UniqueItems item_id
+    area_id AreaId
     deriving Show
 Player_status
-    player_id Text
-    area_id Text
+    area_id AreaId
     time UTCTime Maybe
-    UniquePlayer_status player_id
     deriving Show
 Item_status
-    player_id Text
-    item_id Text
+    player_id Player_statusId
+    item_id ItemId
     status Text
     deriving Show
 
