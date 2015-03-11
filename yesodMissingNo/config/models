@@ -9,14 +9,16 @@ Email
     verkey Text Maybe
     UniqueEmail email
 Area
+    Id
     area_description Text
     name Text Maybe
-    go_north Text Maybe
-    go_east Text Maybe
-    go_south Text Maybe
-    go_west Text Maybe
+    go_north Int Maybe
+    go_east Int Maybe
+    go_south Int Maybe
+    go_west Int Maybe
     deriving Show
 Item
+    Id
     item_description Text
     name Text
     use_action Text
@@ -27,6 +29,8 @@ Item
 Player_status
     area_id AreaId
     time UTCTime Maybe
+    urlHash Text
+    UniqueHash urlHash
     deriving Show
 Item_status
     player_id Player_statusId

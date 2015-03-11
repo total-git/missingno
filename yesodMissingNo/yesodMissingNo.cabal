@@ -20,6 +20,7 @@ library
                      Model
                      Settings
                      Settings.StaticFiles
+                     DbFunctions
                      Handler.Common
                      Handler.Home
                      Handler.HelloWorld
