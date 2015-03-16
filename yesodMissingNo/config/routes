@@ -7,4 +7,4 @@
 / HomeR GET POST
 /hello HelloWorldR GET
 
-/missingno/#Text GameR GET -- POST
+/missingno/#Text GameR GET POST
