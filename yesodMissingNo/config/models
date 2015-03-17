@@ -18,13 +18,13 @@ Area
     go_west Int Maybe
     deriving Show
 Item
-    Id
     item_description Text
     name Text
     use_action Text
     exact_location Text Maybe
     takeable Bool
     area_id AreaId
+    UniqueItem name area_id
     deriving Show
 Player_status
     area_id AreaId
