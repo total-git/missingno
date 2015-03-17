@@ -21,6 +21,7 @@ library
                      Settings
                      Settings.StaticFiles
                      DbFunctions
+                     Parser
                      Handler.Common
                      Handler.Home
                      Handler.HelloWorld
