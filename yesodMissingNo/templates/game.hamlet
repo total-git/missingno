@@ -1,8 +1,8 @@
-<h1>Welcome to the game, #{id}!
+<h1>Welcome to the game, #{playerId}!
     $maybe input <- submission
       <div .message .alert .alert-success>
         Your input was <em>#{input}</em>
-    <form method=post action=@{GameR id}#form enctype=#{formEnctype}>
+    <form method=post action=@{GameR playerId}#form enctype=#{formEnctype}>
       ^{formWidget}
       <button .btn .btn-primary type="submit">
          Submit! <span class="glyphicon glyphicon-upload"></span>
