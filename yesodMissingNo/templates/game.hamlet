@@ -5,4 +5,4 @@
     <form method=post action=@{GameR playerId}#form enctype=#{formEnctype}>
       ^{formWidget}
       <button .btn .btn-primary type="submit">
-         Submit! <span class="glyphicon glyphicon-upload"></span>
+         Submit!

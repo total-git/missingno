@@ -26,6 +26,7 @@ library
                      Handler.Home
                      Handler.HelloWorld
                      Handler.Game
+                     Handler.GameHome
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
