@@ -5,12 +5,15 @@ import DbFunctions
 
 getHelloWorldR :: Handler Html
 getHelloWorldR = do
-    --itemsInArea 2
-    lookAtItemByName "testchair"
-    lookAtItemByUnique "testchair" 1
-    
+    uniqueItem <- lookAtItemByUnique "testchair" 1
+    itemsInArea <- showItemsInArea 1
     defaultLayout $ do
-        setTitle "Hello World"
-        $(widgetFile "helloworld")
-
-
+        setTitle "Test"
+        [whamlet|
+        $maybe (Entity itemKey itemVal) <- uniqueItem
+          #{itemItem_description itemVal}
+        |]
+        [whamlet|
+        $forall (Entity itemKey itemVal) <- itemsInArea
+          #{itemItem_description itemVal}
+        |]
