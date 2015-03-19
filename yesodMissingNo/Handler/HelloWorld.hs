@@ -5,8 +5,9 @@ import DbFunctions
 
 getHelloWorldR :: Handler Html
 getHelloWorldR = do
-    examine "testchair"
     --itemsInArea 2
+    lookAtItemByName "testchair"
+    lookAtItemByUnique "testchair" 1
     
     defaultLayout $ do
         setTitle "Hello World"
