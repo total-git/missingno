@@ -7,6 +7,7 @@ import Control.Monad.CryptoRandom
 import Data.ByteString.Base16 (encode)
 
 -- generate a random id (8 bytes) and forward to the corresponding site
+-- see http://www.yesodweb.com/book/yesods-monads#yesods-monads_adding_a_new_monad_transformer
 getGameHomeR :: Handler Html
 getGameHomeR = do
     gen <- liftIO newGenIO
