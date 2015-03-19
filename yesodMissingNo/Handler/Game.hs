@@ -1,43 +1,27 @@
 module Handler.Game where
 
 import Import
-import Yesod.Form.Bootstrap3
-
-data Input = Input Text deriving Show
+import Parser
+import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 
 getGameR :: Text -> Handler Html
-getGameR id = do
-    defaultLayout [whamlet|Welcome to the game, #{id}|]
---     (formWidget, formEnctype) <- generateFormPost gameForm
---     let submission = Nothing :: Maybe (FileInfo, Text)
---         handlerName = "getGameR" :: Text
---     defaultLayout $ do
---         aDomId <- newIdent
---         setTitle "Welcome to the game!"
---         -- $(widgetFile "game")
---         [whamlet|Welcome to the game, #{id}|]
+getGameR playerId = do
+    (formWidget, formEnctype) <- generateFormPost gameForm
+    let submission = Nothing :: Maybe Text
+    defaultLayout $ do
+        setTitle "Welcome to the game!"
+        $(widgetFile "game")
 
--- postGameR :: Text -> Handler Html
--- postGameR id = do
---     ((result, formWidget), formEnctype) <- runFormPost gameForm
---     let handlerName = "postGameR" :: Text
---         submission = case result of
---             FormSuccess res -> Just res
---             _ -> Nothing
---     defaultLayout $ do
---         aDomId <- newIdent
---         setTitle "Welcome to the game!"
---         -- $(widgetFile "game")
---         [whamlet|Thanks for posting, #{submission}|]
--- 
--- gameAForm :: AForm Handler Input
--- gameAForm = Input
---     <$> areq textField "Input" Nothing
--- 
--- gameForm :: Html -> MForm Handler (FormResult Input, Widget)
--- gameForm = renderTable $ Input $
---     areq textField "Input" Nothing
+postGameR :: Text -> Handler Html
+postGameR playerId = do
+    ((result, formWidget), formEnctype) <- runFormPost gameForm
+    let submission = case result of
+            FormSuccess res -> Just $ show $ parseInput res
+            _ -> Nothing
+    defaultLayout $ do
+        setTitle "Welcome to the game!"
+        $(widgetFile "game")
 
--- gameForm :: AForm Handler Input
--- gameForm = Input
---     <$> areq textField (bfs ("Name" :: Text)) Nothing
+gameForm :: Form Text
+gameForm = renderBootstrap3 BootstrapBasicForm $
+    areq textField "Input" Nothing
