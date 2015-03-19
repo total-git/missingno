@@ -2,7 +2,8 @@ module DbFunctions where
 
 import Import
 
-look_at itemN= do
+-- examine :: 
+examine itemN = do
     item <- runDB $ selectList [ItemName ==. itemN] []
     if null item
       then liftIO $ putStrLn "No items with this Name"

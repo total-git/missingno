@@ -5,7 +5,7 @@ import DbFunctions
 
 getHelloWorldR :: Handler Html
 getHelloWorldR = do
-    look_at "testchair"
+    examine "testchair"
     --itemsInArea 2
     
     defaultLayout $ do
