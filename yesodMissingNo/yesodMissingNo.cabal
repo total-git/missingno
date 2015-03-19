@@ -86,6 +86,9 @@ library
                  , containers
                  , vector
                  , time
+                 , crypto-api
+                 , monadcryptorandom
+                 , base16-bytestring
 
 executable         yesodMissingNo
     if flag(library-only)

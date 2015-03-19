@@ -8,4 +8,4 @@
 /hello HelloWorldR GET
 
 /missingno/#Text GameR GET POST
-/missingno GameHomeR GET POST
+/missingno GameHomeR GET

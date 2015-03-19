@@ -2,18 +2,16 @@ module Handler.GameHome where
 
 import Import
 import Handler.Game
--- import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
+import Crypto.Random (SystemRandom)
+import Control.Monad.CryptoRandom
+import Data.ByteString.Base16 (encode)
 
+-- generate a random id (8 bytes) and forward to the corresponding site
 getGameHomeR :: Handler Html
 getGameHomeR = do
-    -- (formWidget, formEnctype) <- generateFormPost gameHomeForm
-    defaultLayout $ do
-        setTitle "Welcome to the game!"
-        $(widgetFile "gameHome")
-
-postGameHomeR :: Handler Html
-postGameHomeR = postGameR "Eva"
-
--- gameHomeForm :: Form
--- gameHomeForm = renderBootstrap3 BootstrapBasicForm $
---     bootstrapSubmit "Enter Game"
+    gen <- liftIO newGenIO
+    eres <- evalCRandT (getBytes 8) (gen :: SystemRandom)
+    pId <- case eres of
+        Left e -> error $ show (e :: GenError)
+        Right g -> return g
+    getGameR $ decodeUtf8 $ encode pId
