@@ -3,10 +3,24 @@ module Actions where
 import Import
 import DbFunctions
 
---go :: Maybe Text -> Handler (Maybe (Entity Player_status))
---go location = do
---    -- TODO
---
+go :: Text -> Int64 -> Text -> Handler Text
+go loc areaId urlHash = do
+    area <- lookAtArea areaId
+    case area of
+        Just area' -> do
+            let newAreaId = case loc of
+                    "north" -> areaGo_north area'
+                    "east"  -> areaGo_east area'
+                    "west"  -> areaGo_west area'
+                    "south" -> areaGo_south area'
+                    _       -> Nothing
+            case newAreaId of
+                Just newAreaId' -> do
+                    _ <- updateArea (fromIntegral newAreaId') urlHash
+                    return $ "You went " ++ loc ++ "."
+                Nothing -> return "You cannot go there."
+        Nothing -> return "Invalid area ID."
+
 --use :: Maybe Text -> Handler (Maybe (Entity Item_status))
 --use obj = do
 --    -- TODO
@@ -25,13 +39,17 @@ examine obj areaId = do
 pickUp :: Text -> Int64 -> Text -> Handler Text
 pickUp obj areaId urlHash = do
     item <- lookAtItemByUnique obj areaId
+    itemsInInventory <- showInventory urlHash
     case item of
-        Just (Entity _ itemVal) -> do
-            case itemTakeable itemVal of
-                True -> do
-                    _ <- insertItemWithStatus obj areaId urlHash "inventory"
-                    return $ pack $ "Picked up" ++ (show $ itemName itemVal) ++ "."
-                False -> return $ itemName itemVal ++ " not takeable."
+        Just (Entity itemKey itemVal) -> do
+            case itemInInventory (Entity itemKey itemVal) itemsInInventory of
+                True -> do return $ pack $ (show $ itemName itemVal) ++ " is already in your inventory."
+                False -> do
+                    case itemTakeable itemVal of
+                        True -> do
+                            _ <- insertItemWithStatus obj areaId urlHash "inventory"
+                            return $ pack $ "Picked up" ++ (show $ itemName itemVal) ++ "."
+                        False -> return $ itemName itemVal ++ " not takeable."
         Nothing -> return "No such item in this Area."
 
 inventory :: Text -> Handler Text
@@ -40,18 +58,26 @@ inventory urlHash = do
     let items = toItemName "" itemsInInventory
     case items of
         [] -> return "No items in inventory."
-        _  -> return $ pack items
+        _  -> return $ pack $ "Your inventory contains: " ++ items
 
 lookAround :: Int64 -> Handler Text
 lookAround areaId = do
     areaDescription <- lookAtArea areaId
     itemsInArea <- showItemsInArea areaId
     case areaDescription of
-        Just areaVal -> return $ pack $ toItemName (show $ areaArea_description areaVal) itemsInArea
+        Just areaVal -> return $ pack $ (show $ areaArea_description areaVal) ++ "\nThere are the following items: " ++ (toItemName "" itemsInArea)
         _ -> return "Wrong area ID."
 
+-- helper functions
 toItemName :: [Char] -> [Entity Item] -> [Char]
+toItemName out ((Entity _ itemVal):_:xs) =
+  toItemName (out ++ (unpack $ itemName itemVal) ++ ", ") xs
 toItemName out ((Entity _ itemVal):xs) =
   toItemName (out ++ (unpack $ itemName itemVal)) xs
 toItemName out _ =
   out
+
+itemInInventory :: (Entity Item) -> [Entity Item] -> Bool
+itemInInventory _ [] = False
+itemInInventory (Entity itemKey itemVal) ((Entity itemKey' _):xs) =
+    (itemKey == itemKey') || itemInInventory (Entity itemKey itemVal) xs
