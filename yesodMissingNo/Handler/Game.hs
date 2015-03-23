@@ -31,6 +31,9 @@ postGameR urlHash = do
         Just (Input (Just PickUp) (Just obj)) -> do
             out <- pickUp obj areaId urlHash
             return out
+        Just (Input (Just Inventory) _) -> do
+            out <- inventory urlHash
+            return out
         _ -> return "Invalid input."
 
     defaultLayout $ do

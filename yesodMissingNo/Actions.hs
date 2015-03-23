@@ -20,7 +20,7 @@ examine obj areaId = do
     output <- lookAtItemByUnique obj areaId
     case output of
         Just (Entity _ itemVal) -> return $ itemItem_description itemVal
-        Nothing -> return "No such item in this area"
+        Nothing -> return "No such item in this area."
 
 pickUp :: Text -> Int64 -> Text -> Handler Text
 pickUp obj areaId urlHash = do
@@ -30,24 +30,28 @@ pickUp obj areaId urlHash = do
             case itemTakeable itemVal of
                 True -> do
                     _ <- insertItemWithStatus obj areaId urlHash "inventory"
-                    return $ pack $ "Picked up" ++ (show $ itemName itemVal)
+                    return $ pack $ "Picked up" ++ (show $ itemName itemVal) ++ "."
                 False -> return $ itemName itemVal ++ " not takeable."
-        Nothing -> return "No such item in this Area"
+        Nothing -> return "No such item in this Area."
 
---inventory :: Handler (Maybe Text)
---inventory = do
---    -- TODO
---    --
+inventory :: Text -> Handler Text
+inventory urlHash = do
+    itemsInInventory <- showInventory urlHash
+    let items = toItemName "" itemsInInventory
+    case items of
+        [] -> return "No items in inventory."
+        _  -> return $ pack items
 
 lookAround :: Int64 -> Handler Text
 lookAround areaId = do
     areaDescription <- lookAtArea areaId
     itemsInArea <- showItemsInArea areaId
     case areaDescription of
-        Just areaVal -> return $ pack $ listItems (show $ areaArea_description areaVal) itemsInArea
-        _ -> return "Wrong area ID"
-    where listItems :: [Char] -> [Entity Item] -> [Char]
-          listItems out ((Entity _ itemVal):xs) =
-            listItems (out ++ (unpack $ itemName itemVal)) xs
-          listItems out _ =
-            out
+        Just areaVal -> return $ pack $ toItemName (show $ areaArea_description areaVal) itemsInArea
+        _ -> return "Wrong area ID."
+
+toItemName :: [Char] -> [Entity Item] -> [Char]
+toItemName out ((Entity _ itemVal):xs) =
+  toItemName (out ++ (unpack $ itemName itemVal)) xs
+toItemName out _ =
+  out

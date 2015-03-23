@@ -55,5 +55,5 @@ showInventory urlHash = do
         showInventory2 :: Player_statusId -> Handler [Entity Item]
         showInventory2 playerId = 
             runDB $ rawSql
-              "SELECT ?? FROM item, item_status WHERE item.id = item_status.item_d AND ? = item_status.player_id"
+              "SELECT ?? FROM item, item_status WHERE item.id = item_status.item_id AND ? = item_status.player_id"
               [toPersistValue playerId]
