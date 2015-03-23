@@ -3,6 +3,10 @@ module DbFunctions where
 import Import
 import Database.Persist.Sql
 
+insertPlayer :: Text -> Handler (Key Player_status)
+insertPlayer urlHash = do
+    runDB $ insert $ Player_status (toSqlKey 1) Nothing urlHash
+
 lookAtArea :: Int64 -> Handler (Maybe Area)
 lookAtArea areaId = do
     runDB $ get $ toSqlKey areaId
@@ -33,6 +37,22 @@ insertItemWithStatus itemName areaId urlHash status = do
             Just (Entity valId _) -> valId
     runDB $ insert $ Item_status playerId itemId status
 
---showUsedItems :: 
+showUsedItems :: Text -> Handler [Entity Item_status] 
+showUsedItems urlHash = do
+    player <- getPlayer urlHash
+    let playerId = case player of
+            Just (Entity valId _) -> valId
+    runDB $ selectList [Item_statusPlayer_id ==. playerId, Item_statusStatus !=. "inventory"] []
 
---showInventory :: 
+showInventory :: Text -> Handler [Entity Item_status]
+showInventory urlHash = do
+    player <- getPlayer urlHash
+    let playerId = case player of
+            Just (Entity valId _) -> valId
+    runDB $ selectList [Item_statusPlayer_id ==. playerId, Item_statusStatus ==. "inventory"] []
+
+showInventory2 :: Text -> Handler [Entity Item]
+showInventory2 playerId = 
+    runDB $ rawSql
+      "SELECT ?? FROM item, item_status WHERE item.id = item_status.item_d AND ? = item_status.player_id"
+      [toPersistValue playerId]
