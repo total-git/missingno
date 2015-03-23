@@ -2,7 +2,6 @@ module Handler.Game where
 
 import Import
 import Parser
-import DbFunctions
 import Actions
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 
@@ -10,7 +9,7 @@ getGameR :: Text -> Handler Html
 getGameR playerId = do
     (formWidget, formEnctype) <- generateFormPost gameForm
     let submission = Nothing :: Maybe Text
-        output = Nothing :: Maybe Text
+        output = "" :: Text
     defaultLayout $ do
         setTitle "Welcome to the game!"
         $(widgetFile "game")
@@ -26,7 +25,10 @@ postGameR playerId = do
         Just (Input (Just Examine) (Just obj)) -> do
             out <- examine obj areaId
             return out
-        _ -> return Nothing
+        Just (Input (Just LookAround) _ ) -> do
+            out <- lookAround areaId
+            return out
+        _ -> return "Invalid input."
 
     defaultLayout $ do
         setTitle "Welcome to the game!"
