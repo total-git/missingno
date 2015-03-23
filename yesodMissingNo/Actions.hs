@@ -8,24 +8,32 @@ import DbFunctions
 --    -- TODO
 --
 --use :: Maybe Text -> Handler (Maybe (Entity Item_status))
---use object = do
+--use obj = do
 --    -- TODO
 --
 --open :: Maybe Text -> Handler (Maybe (Entity Item_status))
---open object = do
+--open obj = do
 --    -- TODO
 
 examine :: Text -> Int64 -> Handler Text
-examine object areaId = do
-    output <- lookAtItemByUnique object areaId
+examine obj areaId = do
+    output <- lookAtItemByUnique obj areaId
     case output of
         Just (Entity _ itemVal) -> return $ itemItem_description itemVal
         Nothing -> return "No such item in this area"
 
---pickUp :: Maybe Text -> Handler (Maybe (Entity Item_status))
---pickUp object = do
---    -- TODO
---
+pickUp :: Text -> Int64 -> Text -> Handler Text
+pickUp obj areaId urlHash = do
+    item <- lookAtItemByUnique obj areaId
+    case item of
+        Just (Entity _ itemVal) -> do
+            case itemTakeable itemVal of
+                True -> do
+                    _ <- insertItemWithStatus obj areaId urlHash "inventory"
+                    return $ pack $ "Picked up" ++ (show $ itemName itemVal)
+                False -> return $ itemName itemVal ++ " not takeable."
+        Nothing -> return "No such item in this Area"
+
 --inventory :: Handler (Maybe Text)
 --inventory = do
 --    -- TODO

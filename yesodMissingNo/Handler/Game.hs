@@ -6,7 +6,7 @@ import Actions
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 
 getGameR :: Text -> Handler Html
-getGameR playerId = do
+getGameR urlHash = do
     (formWidget, formEnctype) <- generateFormPost gameForm
     let submission = Nothing :: Maybe Text
         output = "" :: Text
@@ -15,7 +15,7 @@ getGameR playerId = do
         $(widgetFile "game")
 
 postGameR :: Text -> Handler Html
-postGameR playerId = do
+postGameR urlHash = do
     ((formResult, formWidget), formEnctype) <- runFormPost gameForm
     let submission = case formResult of
             FormSuccess res -> Just $ parseInput res
@@ -27,6 +27,9 @@ postGameR playerId = do
             return out
         Just (Input (Just LookAround) _ ) -> do
             out <- lookAround areaId
+            return out
+        Just (Input (Just PickUp) (Just obj)) -> do
+            out <- pickUp obj areaId urlHash
             return out
         _ -> return "Invalid input."
 
