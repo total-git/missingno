@@ -17,8 +17,22 @@ showItemsInArea areaId = do
 
 getPlayer :: Text -> Handler (Maybe (Entity Player_status))
 getPlayer urlHash = do
-    runDB $ selectFirst [Player_statusUrlHash ==. urlHash] []
+    runDB $ getBy $ UniqueHash urlHash
 
 updateArea :: Int64 -> Text -> Handler ()
 updateArea newArea urlHash = do
     runDB $ updateWhere [Player_statusUrlHash ==. urlHash] [Player_statusArea_id =. (toSqlKey newArea)]
+
+insertItemWithStatus :: Text -> Int64 -> Text -> Text -> Handler (Key Item_status)
+insertItemWithStatus itemName areaId urlHash status = do
+    player <- getPlayer urlHash
+    item <- lookAtItemByUnique itemName areaId
+    let playerId = case player of
+            Just (Entity valId _) -> valId
+        itemId = case item of
+            Just (Entity valId _) -> valId
+    runDB $ insert $ Item_status playerId itemId status
+
+--showUsedItems :: 
+
+--showInventory :: 
