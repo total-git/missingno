@@ -44,15 +44,16 @@ showUsedItems urlHash = do
             Just (Entity valId _) -> valId
     runDB $ selectList [Item_statusPlayer_id ==. playerId, Item_statusStatus !=. "inventory"] []
 
-showInventory :: Text -> Handler [Entity Item_status]
+showInventory :: Text -> Handler [Entity Item]
 showInventory urlHash = do
     player <- getPlayer urlHash
     let playerId = case player of
             Just (Entity valId _) -> valId
-    runDB $ selectList [Item_statusPlayer_id ==. playerId, Item_statusStatus ==. "inventory"] []
-
-showInventory2 :: Text -> Handler [Entity Item]
-showInventory2 playerId = 
-    runDB $ rawSql
-      "SELECT ?? FROM item, item_status WHERE item.id = item_status.item_d AND ? = item_status.player_id"
-      [toPersistValue playerId]
+    --runDB $ selectList [Item_statusPlayer_id ==. playerId, Item_statusStatus ==. "inventory"] []
+    showInventory2 playerId
+    where
+        showInventory2 :: Player_statusId -> Handler [Entity Item]
+        showInventory2 playerId = 
+            runDB $ rawSql
+              "SELECT ?? FROM item, item_status WHERE item.id = item_status.item_d AND ? = item_status.player_id"
+              [toPersistValue playerId]
