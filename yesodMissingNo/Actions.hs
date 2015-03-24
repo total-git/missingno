@@ -36,7 +36,7 @@ useWith obj areaId urlHash = do
                         True -> do
                             case (x,(unwords xs)) of
                                 ("key", "chest") -> win "You found the magic secret!" urlHash
-                                ("pokeball", "missigno") -> die "of memory corruption" urlHash
+                                ("pokeball", "missingno") -> die "of memory corruption" urlHash
                                 _ -> return "Cannot use those two items together."
                         False -> return "The item has to be in your inventory."
                 Nothing -> return "No such item in this area."
