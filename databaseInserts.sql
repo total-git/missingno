@@ -1,6 +1,6 @@
 insert into Area (id,area_description,go_east) values (1,"There's nothing in this room but a door in the east.",2);
 insert into Area (id,area_description,go_south,go_west) values (2,"What a nice smell in here. Doors are in the south and west.",3,1);
-insert into Area (id,area_description,go_north,go_south,go_west) values (3,"You entered a huge hall with big statues. How did they get through those small doors?... You can see three doors.",2,5,4);
+insert into Area (id,area_description,go_north,go_south,go_west) values (3,"You entered a huge hall with big statues. How did they get through those small doors?... You can see three doors.",2,6,4);
 insert into Area (id,area_description,go_east,go_west) values (4,"The light is broken, but you can see a creature in the corner between the two doors in the east and west.",3,5);
 insert into Area (id,area_description,go_east) values (5,"There's a huge Chuck Norris picture at the wall and the door you're came from.",4);
 insert into Area (id,area_description,go_north,go_south) values (6,"It looks like a bath. You can go north or south.",3,7);

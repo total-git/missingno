@@ -18,7 +18,8 @@ go loc areaId urlHash = do
             case newAreaId of
                 Just newAreaId' -> do
                     _ <- updateArea (fromIntegral newAreaId') urlHash
-                    return $ "You went " ++ loc ++ "."
+                    areaDescription <- lookAround (fromIntegral newAreaId') urlHash
+                    return $ "You went " ++ loc ++ ". " ++ areaDescription
                 Nothing -> return "You cannot go there."
         Nothing -> return "Invalid location."
 
