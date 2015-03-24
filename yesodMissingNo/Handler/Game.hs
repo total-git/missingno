@@ -26,7 +26,7 @@ postGameR urlHash = do
             out <- examine obj areaId
             return out
         Just (Input (Just LookAround) _ ) -> do
-            out <- lookAround areaId
+            out <- lookAround areaId urlHash
             return out
         Just (Input (Just PickUp) (Just obj)) -> do
             out <- pickUp obj areaId urlHash

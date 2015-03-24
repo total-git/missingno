@@ -43,13 +43,13 @@ pickUp obj areaId urlHash = do
     itemsInInventory <- showInventory urlHash
     case item of
         Just (Entity itemKey itemVal) -> do
-            case itemInInventory (Entity itemKey itemVal) itemsInInventory of
-                True -> do return $ pack $ (show $ itemName itemVal) ++ " is already in your inventory."
+            case itemInInventory itemsInInventory (Entity itemKey itemVal) of
+                True -> do return $ pack $ (unpack $ itemName itemVal) ++ " is already in your inventory."
                 False -> do
                     case itemTakeable itemVal of
                         True -> do
                             _ <- insertItemWithStatus obj areaId urlHash "inventory"
-                            return $ pack $ "Picked up" ++ (show $ itemName itemVal) ++ "."
+                            return $ pack $ "Picked up " ++ (unpack $ itemName itemVal) ++ "."
                         False -> return $ itemName itemVal ++ " not takeable."
         Nothing -> return "No such item in this Area."
 
@@ -61,15 +61,16 @@ inventory urlHash = do
         [] -> return "No items in inventory."
         _  -> return $ pack $ "Your inventory contains: " ++ items
 
-lookAround :: Int64 -> Handler Text
-lookAround areaId = do
+lookAround :: Int64 -> Text -> Handler Text
+lookAround areaId urlHash = do
     areaDescription <- lookAtArea areaId
-    itemsInArea <- showItemsInArea areaId
+    items <- showItemsInArea areaId
+    inv <- showInventory urlHash
     case areaDescription of
         Just areaVal ->
-            case itemsInArea of
+            case items of
                 [] -> return $ areaArea_description areaVal
-                xs -> return $ pack $ (unpack $ areaArea_description areaVal) ++ "\nThere are the following items: " ++ (unpack $ toItemName "" xs)
+                items' -> return $ pack $ (unpack $ areaArea_description areaVal) ++ "\nThere are the following items: " ++ (unpack $ toItemName "" (listMinus items' inv))
         _ -> return "Wrong area ID."
 
 -- helper functions
@@ -81,10 +82,13 @@ toItemName out ((Entity _ itemVal):xs) =
 toItemName out _ =
   out
 
-itemInInventory :: (Entity Item) -> [Entity Item] -> Bool
-itemInInventory _ [] = False
-itemInInventory (Entity itemKey itemVal) ((Entity itemKey' _):xs) =
-    (itemKey == itemKey') || itemInInventory (Entity itemKey itemVal) xs
+itemInInventory :: [Entity Item] -> (Entity Item) -> Bool
+itemInInventory [] _ = False
+itemInInventory ((Entity itemKey' _):xs) (Entity itemKey itemVal) =
+    (itemKey == itemKey') || itemInInventory xs (Entity itemKey itemVal)
+
+listMinus :: [Entity Item] -> [Entity Item] -> [Entity Item]
+listMinus items inv = filter (((not .) .) itemInInventory inv) items
 
 getAreaId :: Text -> Handler Int64
 getAreaId urlHash = do
