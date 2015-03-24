@@ -1,9 +1,11 @@
-<!--<h1>Welcome to the game!-->
+<h2>Missingno
 <!--  $maybe input <- submission
     <div .message .alert .alert-success>
       Your input was <em>#{show input}</em> -->
-#{output}#
-<form method=post action=@{GameR urlHash}#form enctype=#{formEnctype}>
-  ^{formWidget}
-<!-- <button .btn .btn-primary type="submit"> Submit! -->
-To restart the game, press <a href="/">here</a>
+<div id="game">
+    <p id="output">#{output}#
+    <form id="input" method=post action=@{GameR urlHash}#form enctype=#{formEnctype}>
+      ^{formWidget}
+    <!-- <button .btn .btn-primary type="submit"> Submit! -->
+<div id="footer">
+    <i>To restart the game, press <a href="/">here</a>

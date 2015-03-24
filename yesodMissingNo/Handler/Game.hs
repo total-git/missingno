@@ -55,4 +55,4 @@ postGameR urlHash = do
 
 gameForm :: Form Text
 gameForm = renderBootstrap3 BootstrapBasicForm $
-    areq (searchField True) "Input" Nothing
+    areq (searchField True) "Input:" Nothing

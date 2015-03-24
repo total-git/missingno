@@ -1,0 +1,20 @@
+h2 {
+color: white;
+background-color: black
+}
+
+#game {
+margin-top: 60px;
+margin-bottom: 30px;
+width: 600px;
+}
+
+#output {
+font-size: 120%;
+}
+
+#input {
+margin-top: 20px;
+margin-left: -30px;
+}
+
