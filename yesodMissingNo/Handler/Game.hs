@@ -16,28 +16,32 @@ getGameR urlHash = do
 
 postGameR :: Text -> Handler Html
 postGameR urlHash = do
-    ((formResult, formWidget), formEnctype) <- runFormPost gameForm
+    (formWidget, formEnctype) <- generateFormPost gameForm
+    ((formResult, _), _) <- runFormPost gameForm
     let submission = case formResult of
             FormSuccess res -> Just $ parseInput res
             _ -> Nothing
     areaId <- getAreaId urlHash
-    output <- case submission of
-        Just (Input (Just Examine) (Just obj)) -> do
-            out <- examine obj areaId
-            return out
-        Just (Input (Just LookAround) _ ) -> do
-            out <- lookAround areaId urlHash
-            return out
-        Just (Input (Just PickUp) (Just obj)) -> do
-            out <- pickUp obj areaId urlHash
-            return out
-        Just (Input (Just Inventory) _) -> do
-            out <- inventory urlHash
-            return out
-        Just (Input (Just Go) (Just loc)) -> do
-            out <- go loc areaId urlHash
-            return out
-        _ -> return "Invalid input."
+    output <- case areaId of
+        0 -> return "Invalid URL. Please return to the startpage."
+        _ -> do
+            case submission of
+              Just (Input (Just Examine) (Just obj)) -> do
+                  out <- examine obj areaId
+                  return out
+              Just (Input (Just LookAround) _ ) -> do
+                  out <- lookAround areaId urlHash
+                  return out
+              Just (Input (Just PickUp) (Just obj)) -> do
+                  out <- pickUp obj areaId urlHash
+                  return out
+              Just (Input (Just Inventory) _) -> do
+                  out <- inventory urlHash
+                  return out
+              Just (Input (Just Go) (Just loc)) -> do
+                  out <- go loc areaId urlHash
+                  return out
+              _ -> return "Invalid input."
 
     defaultLayout $ do
         setTitle "Welcome to the game!"
@@ -45,4 +49,4 @@ postGameR urlHash = do
 
 gameForm :: Form Text
 gameForm = renderBootstrap3 BootstrapBasicForm $
-    areq textField "Input" Nothing
+    areq (searchField True) "Input" Nothing

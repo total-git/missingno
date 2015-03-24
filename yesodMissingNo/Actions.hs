@@ -22,6 +22,9 @@ go loc areaId urlHash = do
                 Nothing -> return "You cannot go there."
         Nothing -> return "Invalid location."
 
+useWith :: Text -> Text -> Int64 -> Text -> Handler Text
+useWith obj1 obj2 areaId urlHash = return ""
+
 --use :: Maybe Text -> Handler (Maybe (Entity Item_status))
 --use obj = do
 --    -- TODO
@@ -50,7 +53,7 @@ pickUp obj areaId urlHash = do
                         True -> do
                             _ <- insertItemWithStatus obj areaId urlHash "inventory"
                             return $ pack $ "Picked up " ++ (unpack $ itemName itemVal) ++ "."
-                        False -> return $ itemName itemVal ++ " not takeable."
+                        False -> return $ pack "This item is not takeable."
         Nothing -> return "No such item in this Area."
 
 inventory :: Text -> Handler Text
