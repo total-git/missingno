@@ -33,8 +33,10 @@ insertItemWithStatus itemName areaId urlHash status = do
     item <- lookAtItemByUnique itemName areaId
     let playerId = case player of
             Just (Entity valId _) -> valId
+            Nothing -> toSqlKey 0
         itemId = case item of
             Just (Entity valId _) -> valId
+            Nothing -> toSqlKey 0
     runDB $ insert $ Item_status playerId itemId status
 
 showUsedItems :: Text -> Handler [Entity Item_status] 
@@ -42,6 +44,7 @@ showUsedItems urlHash = do
     player <- getPlayer urlHash
     let playerId = case player of
             Just (Entity valId _) -> valId
+            Nothing -> toSqlKey 0
     runDB $ selectList [Item_statusPlayer_id ==. playerId, Item_statusStatus !=. "inventory"] []
 
 showInventory :: Text -> Handler [Entity Item]
@@ -49,7 +52,7 @@ showInventory urlHash = do
     player <- getPlayer urlHash
     let playerId = case player of
             Just (Entity valId _) -> valId
-    --runDB $ selectList [Item_statusPlayer_id ==. playerId, Item_statusStatus ==. "inventory"] []
+            Nothing -> toSqlKey 0
     showInventory2 playerId
     where
         showInventory2 :: Player_statusId -> Handler [Entity Item]

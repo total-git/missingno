@@ -1,8 +1,8 @@
 <h1>Welcome to the game!
-  $maybe input <- submission
+<!--  $maybe input <- submission
     <div .message .alert .alert-success>
-      Your input was <em>#{show input}</em>
-  #{output}
-  <form method=post action=@{GameR urlHash}#form enctype=#{formEnctype}>
-    ^{formWidget}
-  <button .btn .btn-primary type="submit"> Submit!
+      Your input was <em>#{show input}</em> -->
+#{output}
+<form method=post action=@{GameR urlHash}#form enctype=#{formEnctype}>
+  ^{formWidget}
+<button .btn .btn-primary type="submit"> Submit!

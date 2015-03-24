@@ -5,7 +5,6 @@
 /robots.txt RobotsR GET
 
 / HomeR GET
-/hello HelloWorldR GET
 
 /missingno/#Text GameR GET POST
 /missingno GameHomeR GET

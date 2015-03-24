@@ -25,7 +25,6 @@ library
                      Actions
                      Handler.Common
                      Handler.Home
-                     Handler.HelloWorld
                      Handler.Game
                      Handler.GameHome
 
