@@ -5,4 +5,4 @@
 #{output}
 <form method=post action=@{GameR urlHash}#form enctype=#{formEnctype}>
   ^{formWidget}
-<button .btn .btn-primary type="submit"> Submit!
+<!-- <button .btn .btn-primary type="submit"> Submit! -->
