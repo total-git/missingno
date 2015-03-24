@@ -60,3 +60,12 @@ showInventory urlHash = do
             runDB $ rawSql
               "SELECT ?? FROM item, item_status WHERE item.id = item_status.item_id AND ? = item_status.player_id"
               [toPersistValue playerId]
+
+deletePlayer :: Text -> Handler ()
+deletePlayer urlHash = do
+    player <- getPlayer urlHash
+    let playerId = case player of
+            Just (Entity valId _) -> valId
+            Nothing -> toSqlKey 0
+    runDB $ deleteWhere [Item_statusPlayer_id ==. playerId]
+    runDB $ deleteBy $ UniqueHash urlHash
