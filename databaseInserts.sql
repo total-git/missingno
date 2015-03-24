@@ -15,3 +15,4 @@ insert into Item (id,item_description,name,use_action,takeable,area_id) values (
 insert into Item (id,item_description,name,use_action,takeable,area_id) values (7,"A bottle filled with a red liquid.","bottle","use",1,5);
 insert into Item (id,item_description,name,use_action,takeable,area_id) values (8,"A big painting of Chuck Norris.","painting","examine",0,5);
 insert into Item (id,item_description,name,use_action,takeable,area_id) values (9,"A small wooden chest. What might be in it?","chest","open",0,7);
+insert into Item (id,item_description,name,use_action,takeable,area_id) values (10,"It's small black key. It might be good for opening something.","key","chest win",1,5);
