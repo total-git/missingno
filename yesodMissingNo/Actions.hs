@@ -65,7 +65,10 @@ lookAround areaId = do
     areaDescription <- lookAtArea areaId
     itemsInArea <- showItemsInArea areaId
     case areaDescription of
-        Just areaVal -> return $ pack $ (show $ areaArea_description areaVal) ++ "\nThere are the following items: " ++ (toItemName "" itemsInArea)
+        Just areaVal ->
+            case itemsInArea of
+                [] -> return $ areaArea_description areaVal
+                xs -> return $ pack $ (unpack $ areaArea_description areaVal) ++ "\nThere are the following items: " ++ (unpack $ toItemName "" xs)
         _ -> return "Wrong area ID."
 
 -- helper functions
