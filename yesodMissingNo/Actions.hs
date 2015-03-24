@@ -35,6 +35,7 @@ useWith obj areaId urlHash = do
                         True -> do
                             case (x,(unwords xs)) of
                                 ("key", "chest") -> win "You found the magic secret!" urlHash
+                                ("pokeball", "missigno") -> die "of memory corruption" urlHash
                                 _ -> return "Cannot use those two items together."
                         False -> return "The item has to be in your inventory."
                 Nothing -> return "No such item in this area."
@@ -62,10 +63,6 @@ eat obj areaId urlHash = do
         Nothing -> return "No such item in this area."
 
 
---use :: Maybe Text -> Handler (Maybe (Entity Item_status))
---use obj = do
---    -- TODO
---
 --open :: Maybe Text -> Handler (Maybe (Entity Item_status))
 --open obj = do
 --    -- TODO
