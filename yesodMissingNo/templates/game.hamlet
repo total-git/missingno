@@ -1,8 +1,9 @@
-<h1>Welcome to the game!
+<!--<h1>Welcome to the game!-->
 <!--  $maybe input <- submission
     <div .message .alert .alert-success>
       Your input was <em>#{show input}</em> -->
-#{output}
+#{output}#
 <form method=post action=@{GameR urlHash}#form enctype=#{formEnctype}>
   ^{formWidget}
 <!-- <button .btn .btn-primary type="submit"> Submit! -->
+To restart the game, press <a href="/">here</a>
