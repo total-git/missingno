@@ -11,7 +11,7 @@ getGameR urlHash = do
     let submission = Nothing :: Maybe Text
         output = "" :: Text
     defaultLayout $ do
-        setTitle "Welcome to the game!"
+        setTitle "Missingno"
         $(widgetFile "game")
 
 postGameR :: Text -> Handler Html
