@@ -20,7 +20,7 @@ postGameR urlHash = do
     let submission = case formResult of
             FormSuccess res -> Just $ parseInput res
             _ -> Nothing
-        areaId = 1
+    areaId <- getAreaId urlHash
     output <- case submission of
         Just (Input (Just Examine) (Just obj)) -> do
             out <- examine obj areaId

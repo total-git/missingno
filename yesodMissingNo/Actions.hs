@@ -2,6 +2,7 @@ module Actions where
 
 import Import
 import DbFunctions
+import Database.Persist.Sql
 
 go :: Text -> Int64 -> Text -> Handler Text
 go loc areaId urlHash = do
@@ -19,7 +20,7 @@ go loc areaId urlHash = do
                     _ <- updateArea (fromIntegral newAreaId') urlHash
                     return $ "You went " ++ loc ++ "."
                 Nothing -> return "You cannot go there."
-        Nothing -> return "Invalid area ID."
+        Nothing -> return "Invalid location."
 
 --use :: Maybe Text -> Handler (Maybe (Entity Item_status))
 --use obj = do
@@ -73,8 +74,8 @@ lookAround areaId = do
 
 -- helper functions
 toItemName :: [Char] -> [Entity Item] -> [Char]
-toItemName out ((Entity _ itemVal):_:xs) =
-  toItemName (out ++ (unpack $ itemName itemVal) ++ ", ") xs
+toItemName out ((Entity _ itemVal):x:xs) =
+  toItemName (out ++ (unpack $ itemName itemVal) ++ ", ") (x:xs)
 toItemName out ((Entity _ itemVal):xs) =
   toItemName (out ++ (unpack $ itemName itemVal)) xs
 toItemName out _ =
@@ -84,3 +85,10 @@ itemInInventory :: (Entity Item) -> [Entity Item] -> Bool
 itemInInventory _ [] = False
 itemInInventory (Entity itemKey itemVal) ((Entity itemKey' _):xs) =
     (itemKey == itemKey') || itemInInventory (Entity itemKey itemVal) xs
+
+getAreaId :: Text -> Handler Int64
+getAreaId urlHash = do
+    player <- getPlayer urlHash
+    case player of
+        Just (Entity _ playerVal) -> return $ fromSqlKey $ player_statusArea_id playerVal
+        Nothing -> return 0
