@@ -13,9 +13,9 @@
 \newcommand{\IZ}{\mathds{Z}}
 \newcommand{\hmod}{\ \widehat\bmod\ }
 
-\title{Lineararithmetik: Simplex-Algoritmus, Fourier-Motzkin Eliminierung und Omega-Test}
-\author{Felix Reihl}
-\subtitle{Vortrag im Seminar Automatisches Beweisen\\Sommersemester 2014}
+\title{Text-basiertes Adventure-Game}
+\author{Eva Braß, Felix Reihl}
+\subtitle{Projekt für die Vorlesung Fortgeschritten Funktionale Programmierung\\Wintersemester 1014/15}
 
 %\logo{ \includegraphics[scale=.07]{LMU_Siegel.pdf}\vspace{250pt} }
 \logo{\pgfputat{\pgfxy(-.5,8.05)}{\pgfbox[center,base]{\includegraphics[width=1.1cm]{LMU_Siegel.pdf}}}}
@@ -34,446 +34,40 @@
 	\tableofcontents
 \end{frame} 
 % ---
-\section{Lineararithmetik}
+\section{Das Game}
 \begin{frame}
-	\frametitle{Syntax}
-	\begin{table}[H]
-		\begin{tabular}{rcl}
-			Formel   & : & Formel $\land$ Formel $\mid$ (Formel) $\mid$ Atom \\
-			Atom     & : & Summe Operator Summe \\
-			Operator & : & $=$ $\mid$ $\leq$ $\mid$ $<$ \\
-			Summe    & : & Term $\mid$ Term $+$ Term \\
-			Term     & : & Variable $\mid$ konstante Variable $\mid$ Konstante
-		\end{tabular}
-	\end{table}
+	\frametitle{Das Spielprinzip}
+		\begin{itemize}
+		\item Per Texteingabe gibt der Spieler Anweisungen.
+		\item Alle Geschehnisse und Beschreibungen werden als Text ausgegeben.
+		\item Beispiel: --ToDo--
+		\end{itemize}
 \end{frame} 
 % ---
-\section{Simplex}
+\section{Diskussion des Codes}
 \begin{frame}
-	\frametitle{Constraints}
-	Gleichungen
-	\[ a_1 x_1 + \dotsc + a_n x_n = 0 \]
-	und untere bzw.\ obere Schranken
-	\[ u_i \leq x_i \leq o_i. \]
 \end{frame}
 % ---
-\subsection{Vorarbeiten}
+\subsection{Verwendete Techniken}
 \begin{frame}
-	\frametitle{Umformungen}
-	\begin{block}{Beispiel}
-		\[ x + y \geq 2, \quad 2x - y \geq 0, \quad -x + 2y \geq 1 \]
-		kann zu
-		\begin{align*}
-			x + y - s_1 &= 0 & s_1 \geq 2 \\
-			2x - y - s_2 &= 0 & s_2 \geq 0 \\
-			-x + 2y - s_3 &= 0 & s_3 \geq 1
-		\end{align*}
-		umgeformt werden.
-	\end{block}
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Graphische Repräsentation als Halbräume und Hyperebenen}
-	\begin{figure}
-		%\includegraphics{hyper.png}
-	\end{figure}
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Darstellung als Matrix}
-	\[
-	\begin{pmatrix}
-		1 & 1 & -1 & 0 & 0 \\
-		2 & -1 & 0 & -1 & 0 \\
-		-1 & 2 & 0 & 0 & -1
-	\end{pmatrix}
-	\]
-	\mbox{}\\
-	Erfüllbarkeit äquivalent zur Existenx eines $x$, sodass
-	\[ Ax = 0 \text{\quad und \quad} \bigwedge_{i=1}^m u_i \leq s_i \leq o_i. \]
-	Hinterer Teil der Matrix ist immer Dreiecksmatrix mit $-1$ auf der Diagonalen.
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Tabellenform}
-	\begin{center}
-		\begin{tabular}{r|rr}
-			& $x$ & $y$ \\ \hline
-			$s_1$ & $1$ & $1$ \\
-			$s_2$ & $2$ & $-1$ \\
-			$s_3$ & $-1$ & $2$
-		\end{tabular}
-		\qquad
-		\begin{tabular}{rrr}
-			$2$ & $\leq$ & $s_1$ \\
-			$0$ & $\leq$ & $s_2$ \\
-			$1$ & $\leq$ & $s_3$
-		\end{tabular}
-		\[ \mathcal{B} = \{ s_1, s_2, s_3 \}, \quad \mathcal{N} = \{ x, y \} \]
-	\end{center}
-\end{frame}
-% ---
-\subsection{Algorithmus}
-\begin{frame}
-	\frametitle{Algorithmus}
-	Zuweisung
-	\[ \alpha : \mathcal{B} \cup \mathcal{N} \rightarrow \IQ \]
-	% Anfangs alle \alpha(x_i) = 0
-	Invarianten des Algorithmus:
-	\begin{itemize}
-		\item $Ax = 0$
-		\item $\forall x_j \in \mathcal{N} . u_j \leq \alpha(x_j) \leq o_j$
-	\end{itemize}
-	Simplex prüft iterativ, ob eine Variable $\in \mathcal{B}$ (z.B.\ $s_1, s_2, s_3$) existiert, die ihre Schranke verletzt.
-\end{frame}
-% ---
-\begin{frame}
-	Sei nun o.B.d.A.\ $\alpha(x_i) > o_i$.
-	
-	Eine Gleichung nach $x_i$ umstellen:
-	\[ x_i = \sum_{x_j \in \mathcal{N}} a_{i,j} x_j \]
-	$\Rightarrow$ ein passendes $x_j$ verändern, sodass $x_i$ kleiner wird. % und seine Schranke nicht mehr verletzt.
-
-	Wenn kein passendes $x_j$ existiert $\Rightarrow$ \emph{Unerfüllbar}.
-
-	u.U. ist jetzt die Invariante $\forall x_j \in \mathcal{N} . u_j \leq \alpha(x_j) \leq o_j$ verletzt.
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Pivot-Operation}
-	$x_j$ soll um 
-	\[ \Theta = \frac{o_i - \alpha(x_i)}{a_{i,j}} \]
-	verringert bzw.\ erhöht werden, sodass es seine Schranke verletzt.
-
-	$\Rightarrow$ Wir vertauschen $x_i$ und $x_j$ in der Tabelle:
-	\begin{enumerate}
-		\item Löse Zeile $i$ nach $x_j$ auf.
-		\item Setze das Ergebnis in alle anderen Zeilen ein, sodass $x_j$ eliminiert wird.
-	\end{enumerate}
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Beispiel}
-	\begin{center}
-		\begin{tabular}{r|rr}
-			& $x$ & $y$ \\ \hline
-			$s_1$ & $1$ & $1$ \\
-			$s_2$ & $2$ & $-1$ \\
-			$s_3$ & $-1$ & $2$
-		\end{tabular}
-		\qquad
-		\begin{tabular}{rrr}
-			$2$ & $\leq$ & $s_1$ \\
-			$0$ & $\leq$ & $s_2$ \\
-			$1$ & $\leq$ & $s_3$.
-		\end{tabular}
-	\end{center}
-	Die Anfangsbelegung $\alpha(x_i) = 0\ \forall i$ verletzt $2 \leq s_1$. $x$ ist passender Kandidat für Pivot-Operation.
-
-	$\Rightarrow$ $s_1$ um $2$ erhöhen $\Rightarrow$ $x$ um $2$ erhöhen.
-
-	Gleichung in Zeile von $s_1$ nach $x$ auflösen:
-	\begin{align*}
-		s_1 &= x + y \\
-		x & = s_1 - y
-	\end{align*}
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Beispiel (cont)}
-	\begin{center}
-		\begin{tabular}{r|rr}
-			& $s_1$ & $y$ \\ \hline
-			$x$ & $1$ & $-1$ \\
-			$s_2$ & $2$ & $-3$ \\
-			$s_3$ & $-1$ & $3$
-		\end{tabular}
-		\qquad
-		\begin{tabular}{rrr}
-			$\alpha(x)$ & $=$ & $2$ \\
-			$\alpha(y)$ & $=$ & $0$ \\
-			$\alpha(s_1)$ & $=$ & $2$ \\
-			$\alpha(s_2)$ & $=$ & $4$ \\
-			$\alpha(s_3)$ & $=$ & $-2$
-		\end{tabular}
-	\end{center}
-	Untere Schranke von $s_3$ verletzt; $s_3$ muss also um $3$ inkrementiert werden. $\Rightarrow$ Pivot-Operation mit $s_3$ und $y$.
-	\begin{center}
-		\begin{tabular}{r|rr}
-			& $s_1$ & $s_3$ \\ \hline
-			$x$ & $2/3$ & $-1/3$ \\
-			$s_2$ & $1$ & $-3$ \\
-			$y$ & $1/3$ & $1/3$
-		\end{tabular}
-		\qquad
-		\begin{tabular}{rrr}
-			$\alpha(x)$ & $=$ & $1$ \\
-			$\alpha(y)$ & $=$ & $1$ \\
-			$\alpha(s_1)$ & $=$ & $2$ \\
-			$\alpha(s_2)$ & $=$ & $1$ \\
-			$\alpha(s_3)$ & $=$ & $1$
-		\end{tabular}
-	\end{center}
-	% Zuweisung x \mapsto 1, y \mapsto 1 erfüllt
-	% Variablen anordnen, damit keine Endlosschleife auftritt
-\end{frame}
-% ---
-\section{Fourier-Motzkin Variableneliminierung}
-\begin{frame}
-	\frametitle{Fourier-Motzkin}
-	Konjunktion von linearen Constraints über $\mathds{R}$:
-	\begin{align*}
-		\sum_{j=1}^n a_{i,j} \cdot x_j &= b_i \\
-		\sum_{j=1}^n a_{i,j} \cdot x_j &\leq b_i
-	\end{align*}
-	Erfüllbar?
-\end{frame}
-\subsection{Eliminierung von Variablen}
-\begin{frame}
-	\frametitle{Eliminierung von Variablen in Gleichungen}
-	$x_j$ soll eliminiert werden $\Rightarrow$ Gleichung $i$ nach $x_j$ umstellen (vorausgesetzt, dass $a_{i,j} \neq 0$). O.B.d.A.\ sei diese Variable $x_n$.
-	\[ \sum_{j=1}^n a_{i,j} \cdot x_j = b_i \]
-	wird zu
-	\[ x_n = \frac{b_i}{a_{i,n}} - \sum_{j=1}^{n-1} \frac{a_{i,j}}{a_{i,n}} \cdot x_j. \]
-	$\Rightarrow$ In die anderen Gleichungen einsetzen und iterativ fortsetzen.
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Eliminierung von Variablen in Ungleichungen}
-	\begin{itemize}
-		\item Eliminierung einer Variablen durch Projektion auf die übrigen Variablen
-		\item Erzeugt u.U.\ neue Constraints
-	\end{itemize}
-	\[ \sum_{j=1}^n a_{i,j} \cdot x_j \leq b_i \]
-	Summe aufspalten und umstellen:
-	\[ a_{i,n} \cdot x_n \leq b_i - \sum_{j=1}^{n-1} a_{i,j} \cdot x_j \]
-	Durch $a_{i,n}$ teilen $\Rightarrow$ untere oder obere Schranke $\beta_i$ für $x_n$.
-	% Je nachdem, ob a_ij > 0 oder < 0
-\end{frame}
-% ---
-\subtitle{Beschränkte und unbeschränkte Variablen}
-\begin{frame}
-	\frametitle{Beschränkte und unbeschränkte Variablen}
-	\begin{itemize}
-		\item Eine unbeschränkte Variable ist nicht von beiden Seiten beschränkt
-		\item Kann zusammen mit allen Constraints in denen sie vorkommt entfernt werden
-	\end{itemize}
-	Im Folgenden sei $x_n$ also beschränkt:
-	\begin{align*}
-		\beta_u &\leq x_n \leq \beta_o \\
-		\beta_u &\leq \beta_o
-	\end{align*}
-	Wenn zu $0 < b_k$ oder $0 \leq b_k$ vereinfachbar $\Rightarrow$ Widerspruch
-
-	Sonst alle Constraints mit $x_n$ entfernen.
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Beispiel}
-	\begin{align*}
-		x_1 - x_2 &\leq 0 \\
-		x_1 - x_3 &\leq 0 \\
-		-x_1 + x_2 + 2x_3 &\leq 0 \\
-		-x_3 &\leq -1
-	\end{align*}
-	\begin{itemize}
-		\item $x_1$ eliminieren: zwei obere Schranken ($x_1 \leq x_2$ und $x_1 \leq x_3$) und eine untere Schranke ($x_2 + 2x_3 \leq x_1$)
-		\item Neue Constraints $2x_3 \leq 0$ und $x_1 \leq x_3$	
-	\end{itemize}
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Beispiel (cont)}
-	\begin{align*}
-		2x_3 &\leq 0 \\
-		x_2 + x_3 &\leq 0 \\
-		-x_3 &\leq -1
-	\end{align*}
-	$x_2$ hat keine untere Schranke mehr $\Rightarrow$ zweite Ungleichung entfernen
-
-	Rest lässt sich zu $1 \leq 0$ zusammenfassen $\Rightarrow$ Unerfüllbar
-	% exponentielles Wachstum mit Anzahl der Variablen
-\end{frame}
-% ---
-\section{Omega-Test}
-\begin{frame}
-	\frametitle{Omega-Test}
-	Erfüllbarkeit von linearen Constraints über ganzzahligen Variablen der Form
-	\[ \sum_{i=1}^n a_i x_i = b \text{\quad oder\quad }  \sum_{i=1}^n a_i x_i \leq b. \]
-\end{frame}
-% ---
-\subsection{Gleichungen}
-\begin{frame}
-	\frametitle{Gleichungen}
-	Wenn ein $x_j$ mit $a_j = \pm 1$ existiert, direkt umstellen (o.B.d.A.\ sei diese Variable $x_n$) und in die anderen Gleichungen einsetzen.
-	\[ x_n = \frac{b}{a_n} - \sum_{i=1}^{n-1} \frac{a_i}{a_n} x_i. \]
-	Sonst kann nicht durch $a_j$ geteilt werden, da sonst Vorfaktoren nicht mehr ganzzahlig sind.
-
-	Im Folgenden: Verfahren mit dem ein Vorfaktor betragsmäßig kontinuierlich verkleinert wird, bis er $\pm 1$ erreicht.
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Symmetrisches Modulo}
-	\begin{align*}
-		a \hmod b &:= a - b \cdot \left\lfloor \frac{a}{b} + \frac{1}{2} \right\rfloor =\\
-		&\phantom{:}= \begin{cases} {a \bmod b,} & \text{falls } {a \bmod b < b/2} \\ {(a \bmod b) - b,} & \text{sonst} \end{cases}
-	\end{align*}
-	Wir wollen eine Ersetzung für $x_n$ finden.
-
-	Definiere $m := a_n + 1$; $\sigma$ sei eine neue Variable.
-\end{frame}
-% ---
-\begin{frame}
-	\begin{block}{Bemerkungen}
 		\begin{itemize}
-			\item $a_n \hmod m = -1$
-			\item $a_i - (a_i \hmod m) = m \lfloor a_i/m + 1/2 \rfloor$, also durch $m$ teilbar.
+		\item Yesod Framework
+		\item Persistent
+		\item Forms
+		\item Monaden
 		\end{itemize}
-	\end{block}
-	Wir führen nun das Constraint
-	\[ \sum_{i=1}^n (a_i \hmod m) x_i = m \sigma + b \hmod m \]
-	ein und teilen die Summe auf zu
-	\begin{align*}
-		(a_n \hmod m) x_n &= m \sigma + b \hmod m - \sum_{i=1}^{n-1} (a_i \hmod m) x_i \\
-		x_n &= -m \sigma - b \hmod m + \sum_{i=1}^{n-1} (a_i \hmod m) x_i.
-	\end{align*}
 \end{frame}
 % ---
+\subsection{Intressante Probleme}
 \begin{frame}
-	Einsetzen in die anderen Gleichungen:
-	\[ -a_n m \sigma + \sum_{i=1}^{n-1} ( a_n ( a_i \hmod m ) ) x_i = b + a_n ( b \hmod m ) \]
-	Unter Verwendung von $a_n = m - 1$:
-	\begin{multline*}
-		-a_n m \sigma + \sum_{i=1}^{n-1} ( a_i - ( a_i \hmod m ) + m ( a_i \hmod m ) )  x_i =\\
-		= b - ( b \hmod m ) + m ( b \hmod m ).
-	\end{multline*}
-	Wegen Bemerkung 2 kann durch $m$ geteilt werden:
-	\[ -a_n \sigma + \sum_{i=1}^{n-1} ( \lfloor a_i/m + 1/2 \rfloor +  ( a_i \hmod m ) ) x_i = \lfloor b/m + 1/2 \rfloor + ( b \hmod m ) \]
 \end{frame}
 % ---
+\section{Genutze Bibliotheken und Codevorlagen}
 \begin{frame}
-	\frametitle{Folgerung}
-	Für den neuen Vorfaktor von $x_i$ gilt:
-	\[ | \lfloor a_i/m + 1/2 \rfloor + (a_i \hmod m) | \leq 5/6 | a_i | \]
-	$\Rightarrow$ Der Vorfaktor von $x_i$ wird betragsmäßig in jedem Schritt kleiner und ist ganzzahlig, also wird irgendwann $\pm 1$ erreicht.
 \end{frame}
 % ---
-\subsection{Ungleichungen}
+\section{Verteilung der Aufgaben}
 \begin{frame}
-	Variable zum Eliminieren Auswählen, dann die drei Unterprozeduren aufrufen:
-	\begin{itemize}
-		\item Real-Shadow
-		\item Dark-Shadow
-		\item Gray-Shadow
-	\end{itemize}
-\end{frame}
-\begin{frame}
-	\frametitle{Verfahren}
-	\begin{center}
-		%\includegraphics[scale=0.8]{abbildung_flowchart.png}
-	\end{center}
 \end{frame}
 % ---
-\begin{frame}
-	\frametitle{Real-Shadow}
-	\begin{itemize}
-		\item Ähnlich Fourier-Motzkin: Variable auswählen und auf die restlichen Variablen projizieren.
-		\item Falls am Ende keine ganzzahlige Lösung gefunden wird, ist das gesamte System unerfüllbar.
-		\item Überabschätzung, also gilt der Umkehrschluss nicht.
-	\end{itemize}
-	$z$ soll eliminiert werden; $\beta \leq bz$ und $cz \leq \gamma$ seinen lineare Constraints mit $c,b \in \IN$ und $\beta,\gamma$ als lineare Restausdrücke.
-
-	Multiplizieren mit $c$ bzw.\ $b$ ergibt
-	\[ c\beta \leq cbz \text{\quad und \quad} cbz \leq b\gamma, \]
-	also $c\beta \leq b\gamma$, wenn ein solches $z$ existiert.
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Dark-Shadow}
-	\begin{itemize}
-		\item Unterabschätzung: Wenn keine Lösung gefunden wird, heißt es nicht, dass das System unerfüllbar ist.
-		\item Wir suchen $z$, sodass $c \beta \leq cbz \leq b \gamma$, also
-			\[ \exists z \in \IZ. \frac{\beta}{b} \leq z \leq \frac{\gamma}{c}. \]
-		\item Annahme: Solch ein $z$ existiert nicht. Dann gilt
-			\[ i < \frac{\beta}{b} \leq \frac{\gamma}{c} < i+1, \]
-			wobei $i = \lfloor \beta/b \rfloor$.
-	\end{itemize}
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Dark-Shadow (cont)}
-	\begin{itemize}
-		\item Abstand von $\beta/b$ zu $i$ ist $\geq 1/b$
-		\item Abstand von $\gamma/c$ zu $i+1$ ist $\geq 1/c$
-		\item In Kombination ergibt sich (negiert)
-			\[ b\gamma - c\beta \geq (c-1)(b-1) \]
-		\item Falls diese Ungleichung wahr ist, war die Annahme falsch, dass es keine ganzzahlige Lösung gibt. Also existiert eine Lösung und es kann \emph{erfüllbar} zurückgegeben werden.
-		\item Falls $c=1$ oder $b=1$, sind die beiden Ungleichungen aus Real-Shadow und Dark-Shadow identisch
-	\end{itemize}
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Gray-Shadow}
-	\begin{itemize}
-		\item Eine Lösung muss
-			\[ c\beta \leq cbz \leq b\gamma \]
-			erfüllen
-		\item Außerdem muss 
-			\[ b\gamma - c\beta \leq cb - c - b \]
-			gelten, da sonst die Lösung schon in Dark-Shadow gefunden worden wäre
-		\item Zusammengefasst:
-			\[ \beta \leq bz \leq \beta + \frac{cb - c - b}{c} \]
-		\item Innerhalb dieser Schranke probiert der Omega-Test nun mögliche Werte aus.
-	\end{itemize}
-\end{frame}
-% ---
-\subsection{Vorverarbeitung}
-\begin{frame}
-	\frametitle{Vorverarbeitung in allgemeinen linearen Systemen}
-	\begin{itemize}
-		\item Im Beispiel
-			\[ x_1 + x_2 \leq 2, \quad x_1 \leq 1, \quad x_2 \leq 1 \]
-			ist die erste Ungleichung redundant. % Wenn den Variablen ihre obere bzw. untere Schranke zugewiesen wird, ist die andere Ungleichung erfüllt
-		\item Im Beispiel
-			\[ 2x_1 + x_2 \leq 2, \quad x_2 \leq 4, \quad x_1 \leq 3 \]
-			kann aus den ersten beiden Ungleichungen $x_1 \leq -1$ hergeleitet werden, sodass die Schranke $x_1 \leq 3$ verschärft werden kann.
-	\end{itemize}
-\end{frame}
-% ---
-\begin{frame}
-	\frametitle{Vorverarbeitung in ganzzahligen linearen Systemen}
-	\begin{itemize}
-		\item Falls Vorfaktoren nicht ganzzahlig sondern rational sind, mit dem kleinsten gemeinsamen Nenner ganzzahlig machen.
-		\item In gleicher Weise schon ganzzahlige Vorfaktoren mit dem größten gemeinsamen Teiler minimieren. % Wenn die rechte Seite einer Gleichung b nicht durch dadurch teilbar ist, kann schon unerfüllbar zurückgegeben werden.
-		\item Ungleichungen mit $<$ oder $>$ zu nicht-strikten Ungleichungen mit $\leq$ bzw.\ $\geq$ machen, indem $1$ addiert oder subtrahiert wird.
-		\item Spezifischere Umformungen für binäre Variablen
-	\end{itemize}
-\end{frame}
-% ---
-\section{Zusammenfassung}
-\begin{frame}
-	\frametitle{Zusammenfassung}
-	\begin{itemize}
-		\item Simplex-Algorithmus (reelle Zahlen) und Branch-and-Bound (ganze Zahlen) effizient, auch für große Anzahl von Constraints
-		\item Fourier-Motzkin (reelle Zahlen) und Omega-Test (ganze Zahlen) in der Theorie weniger effizient, aber leicht zu implementieren und für kleine Anzahl an Constraints kein großer Geschwindigkeitsunterschied
-	\end{itemize}
-\end{frame}
-% ---
-\section{}
-\begin{frame}
-	\center
-	Vielen Dank für Ihre Aufmerksamkeit!
-
-	Fragen?
-	\begin{block}{Quellen}
-		\begin{thebibliography}{99}
-		\bibitem{kroening}
-			\textsc{D. Kroening and O. Strichman},
-			Decision Procedures: An Algorithmic Point of View,
-			Springer Publishing Company, Incorporated, 1 edition, 2008,
-			Kapitel 5
-		\end{thebibliography}
-	\end{block}
-\end{frame}
-
 \end{document}
