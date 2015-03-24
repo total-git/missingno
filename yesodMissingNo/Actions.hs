@@ -22,8 +22,35 @@ go loc areaId urlHash = do
                 Nothing -> return "You cannot go there."
         Nothing -> return "Invalid location."
 
-useWith :: Text -> Text -> Int64 -> Text -> Handler Text
-useWith obj1 obj2 areaId urlHash = return ""
+useWith :: Text -> Int64 -> Text -> Handler Text
+useWith obj areaId urlHash = do
+    let words' = words obj
+    return ""
+--     case head words' of
+--         "with" -> return "with"
+--         _ -> return "Invalid input."
+
+die :: Text -> Text -> Handler Text
+die out urlHash = do
+    deletePlayer urlHash
+    return $ "You died because " ++ out ++ "! Visit the startpage to restart."
+
+win :: Text -> Text -> Handler Text
+win out urlHash = do
+    deletePlayer urlHash
+    return $ "You won!" ++ out ++ "Visit the startpage to restart."
+
+eat :: Text -> Int64 -> Text -> Handler Text
+eat obj areaId urlHash = do
+    item <- lookAtItemByUnique obj areaId
+    case item of
+        Just (Entity _ itemVal) -> do
+            case itemUse_action itemVal of
+                -- "eat nothing" -> return $ pack $ "You eat the " ++ (unpack $ itemName itemVal) ++ ". Nothing happens."
+                "eat die" -> die "you weren't listening" urlHash
+                _ -> return "This item is not edible."
+        Nothing -> return "No such item in this area."
+
 
 --use :: Maybe Text -> Handler (Maybe (Entity Item_status))
 --use obj = do

@@ -41,6 +41,12 @@ postGameR urlHash = do
               Just (Input (Just Go) (Just loc)) -> do
                   out <- go loc areaId urlHash
                   return out
+              Just (Input (Just Eat) (Just obj)) -> do
+                  out <- eat obj areaId urlHash
+                  return out
+              Just (Input (Just Use) (Just obj)) -> do
+                  out <- useWith obj areaId urlHash
+                  return out
               _ -> return "Invalid input."
 
     defaultLayout $ do

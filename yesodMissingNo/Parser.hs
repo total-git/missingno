@@ -7,7 +7,7 @@ data Input = Input { act :: Maybe Action,
                      obj :: Maybe Text
                    } deriving (Show, Eq)
 
-data Action = Go | Use | Open | Examine | PickUp | Inventory | LookAround deriving (Show, Eq)
+data Action = Go | Use | Open | Examine | PickUp | Inventory | LookAround | Eat deriving (Show, Eq)
 -- TODO add more actions
 action :: Text -> Maybe Action
 action txt | oelem (toLower txt) ["go", "move", "run", "walk"]
@@ -24,6 +24,8 @@ action txt | oelem (toLower txt) ["go", "move", "run", "walk"]
              = Just Inventory
            | oelem (toLower txt) ["look around", "look about", "look round", "scout", "glance around"]
              = Just LookAround
+           | oelem (toLower txt) ["eat", "devour", "consume"]
+             = Just Eat
            | otherwise
              = Nothing
 
