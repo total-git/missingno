@@ -25,10 +25,20 @@ go loc areaId urlHash = do
 useWith :: Text -> Int64 -> Text -> Handler Text
 useWith obj areaId urlHash = do
     let words' = words obj
-    return ""
---     case head words' of
---         "with" -> return "with"
---         _ -> return "Invalid input."
+    case words' of
+        x:"with":xs -> do
+            obj <- lookAtItemByUnique (unwords xs) areaId
+            case obj of
+                Just obj' -> do
+                    inv <- showInventory urlHash
+                    case itemInInventoryByName inv x of
+                        True -> do
+                            case (x,(unwords xs)) of
+                                ("key", "chest") -> win "You found the magic secret!" urlHash
+                                _ -> return "Cannot use those two items together."
+                        False -> return "The item has to be in your inventory."
+                Nothing -> return "No such item in this area."
+        _ -> return "Invalid input."
 
 die :: Text -> Text -> Handler Text
 die out urlHash = do
@@ -38,7 +48,7 @@ die out urlHash = do
 win :: Text -> Text -> Handler Text
 win out urlHash = do
     deletePlayer urlHash
-    return $ "You won!" ++ out ++ "Visit the startpage to restart."
+    return $ "You won! " ++ out ++ " Visit the startpage to restart."
 
 eat :: Text -> Int64 -> Text -> Handler Text
 eat obj areaId urlHash = do
@@ -116,6 +126,11 @@ itemInInventory :: [Entity Item] -> (Entity Item) -> Bool
 itemInInventory [] _ = False
 itemInInventory ((Entity itemKey' _):xs) (Entity itemKey itemVal) =
     (itemKey == itemKey') || itemInInventory xs (Entity itemKey itemVal)
+
+itemInInventoryByName :: [Entity Item] -> Text -> Bool
+itemInInventoryByName [] _ = False
+itemInInventoryByName ((Entity _ itemVal):xs) y =
+    ((itemName itemVal) == y) || itemInInventoryByName xs y
 
 listMinus :: [Entity Item] -> [Entity Item] -> [Entity Item]
 listMinus items inv = filter (((not .) .) itemInInventory inv) items
